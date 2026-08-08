@@ -1,0 +1,48 @@
+# Python bytecode and environments
+__pycache__/
+*.py[cod]
+*.pyo
+.Python
+.venv/
+venv/
+.direnv/
+
+# Python tooling and build output
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+htmlcov/
+build/
+dist/
+*.egg-info/
+
+# Qt/QML generated files
+.qmlcache/
+*.qmlc
+.qmlls.ini
+
+# Local configuration and logs
+.env
+.env.*
+!.env.example
+*.log
+*.tmp
+
+# Noctalia per-user plugin runtime state (defaults live in manifest.json)
+*/settings.json
+
+# Agent / local tooling
+.pi/
+.claude/
+.cursor/
+.grok/
+
+# Operating system and editor files
+.DS_Store
+*~
+*.swp
+.idea/
+.vscode/
+*.code-workspace

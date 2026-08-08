@@ -1,0 +1,10 @@
+# Keychron devices (VID 3434) — allow local user access to hidraw for
+# Keychron Launcher (WebHID) and tools that read battery over vendor HID.
+# https://launcher.keychron.cn / https://launcher.keychron.com
+#
+# Install:
+#   sudo cp udev/70-keychron.rules /etc/udev/rules.d/
+#   sudo udevadm control --reload-rules
+#   sudo udevadm trigger --subsystem-match=hidraw --action=add
+KERNEL=="hidraw*", SUBSYSTEM=="hidraw", ATTRS{idVendor}=="3434", MODE="0660", TAG+="uaccess"
+KERNEL=="hidraw*", SUBSYSTEM=="hidraw", KERNELS=="0003:3434:*", MODE="0660", TAG+="uaccess"

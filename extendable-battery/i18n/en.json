@@ -1,0 +1,23 @@
+{
+  "settings": {
+    "device-filter": "Device name filter",
+    "device-filter-desc": "Optional substring used to prefer a specific device.",
+    "prefer-bluetooth": "Prefer Bluetooth readings",
+    "prefer-bluetooth-desc": "Prefer Bluetooth when a provider reports multiple readings. This is only used by the default provider-device selection."
+  },
+  "menu": {
+    "refresh": "Refresh"
+  },
+  "status": {
+    "unavailable": "Unavailable",
+    "charging": "Charging",
+    "plugged-in": "Plugged in",
+    "discharging": "On battery",
+    "low": "Low",
+    "critical": "Critical"
+  },
+  "panel": {
+    "refresh": "Refresh",
+    "unnamed-device": "Battery Device"
+  }
+}

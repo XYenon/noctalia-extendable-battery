@@ -1,0 +1,16 @@
+{
+  "settings": {
+    "enable-bluetooth": "启用蓝牙读数",
+    "enable-bluetooth-desc": "读取 BlueZ 提供的设备电量信息。",
+    "bluetooth-filter": "蓝牙名称过滤",
+    "bluetooth-filter-desc": "只包含名称中含有此文本的蓝牙设备。",
+    "refresh-interval": "刷新间隔（毫秒）",
+    "refresh-interval-desc": "查询 HID 和 BlueZ 的频率（最小 5000）。",
+    "notifications-enabled": "电池通知",
+    "notifications-enabled-desc": "每次放电周期分别显示一次低电量和严重低电量通知。",
+    "warning-threshold": "低电量阈值（%）",
+    "warning-threshold-desc": "显示低电量通知的电量百分比。",
+    "critical-threshold": "严重低电量阈值（%）",
+    "critical-threshold-desc": "显示严重低电量通知的电量百分比。"
+  }
+}

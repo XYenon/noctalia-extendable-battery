@@ -1,0 +1,28 @@
+{
+  "id": "keychron-battery-provider",
+  "name": "Keychron Battery Provider",
+  "version": "0.1.0",
+  "minNoctaliaVersion": "4.7.7",
+  "author": "XYenon",
+  "license": "MIT",
+  "repository": "https://github.com/XYenon/noctalia-extendable-battery",
+  "description": "Keychron HID and Bluetooth battery provider for Extendable Battery.",
+  "tags": ["System", "Utility"],
+  "entryPoints": {
+    "main": "Main.qml",
+    "settings": "Settings.qml"
+  },
+  "dependencies": {
+    "plugins": ["extendable-battery"]
+  },
+  "metadata": {
+    "defaultSettings": {
+      "refreshIntervalMs": 60000,
+      "enableBluetooth": true,
+      "bluetoothNameFilter": "keychron",
+      "warningThreshold": 20,
+      "criticalThreshold": 5,
+      "notificationsEnabled": true
+    }
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "settings": {
+    "enable-bluetooth": "Enable Bluetooth readings",
+    "enable-bluetooth-desc": "Read battery information exposed by BlueZ.",
+    "bluetooth-filter": "Bluetooth name filter",
+    "bluetooth-filter-desc": "Only include Bluetooth devices whose name contains this text.",
+    "refresh-interval": "Refresh interval (ms)",
+    "refresh-interval-desc": "How often to query HID and BlueZ (minimum 5000).",
+    "notifications-enabled": "Battery notifications",
+    "notifications-enabled-desc": "Show low and critical battery notifications once per discharge cycle.",
+    "warning-threshold": "Low battery threshold (%)",
+    "warning-threshold-desc": "Percentage at which a low-battery notification is shown.",
+    "critical-threshold": "Critical battery threshold (%)",
+    "critical-threshold-desc": "Percentage at which a critical-battery notification is shown."
+  }
+}

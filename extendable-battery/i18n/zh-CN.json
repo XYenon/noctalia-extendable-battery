@@ -1,0 +1,23 @@
+{
+  "settings": {
+    "device-filter": "设备名称过滤",
+    "device-filter-desc": "可选，用于优先选择特定设备的名称片段。",
+    "prefer-bluetooth": "优先蓝牙读数",
+    "prefer-bluetooth-desc": "Provider 提供多个读数时优先选择蓝牙。仅用于默认 Provider 设备选择。"
+  },
+  "menu": {
+    "refresh": "刷新"
+  },
+  "status": {
+    "unavailable": "不可用",
+    "charging": "充电中",
+    "plugged-in": "已接通电源",
+    "discharging": "使用电池",
+    "low": "电量低",
+    "critical": "电量严重不足"
+  },
+  "panel": {
+    "refresh": "刷新",
+    "unnamed-device": "电池设备"
+  }
+}
