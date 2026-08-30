@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Read Keychron device battery using the same HID framing as launcher.keychron.cn.
+"""Read Keychron device batteries for the Noctalia v5 Extendable Battery plugin.
 
 Protocols (from Keychron Launcher production JS):
 
@@ -546,6 +546,7 @@ class BatteryReading:
     name: str
     percent: int
     charging: bool = False
+    plugged_in: bool = False
     status: int = 0
     protocol: str = ""
     transport: str = ""
@@ -566,7 +567,7 @@ class BatteryReading:
         d["id"] = d.pop("device_id")
         d["present"] = self.connected
         d["ready"] = self.connected and self.percent >= 0
-        d["pluggedIn"] = False
+        d["pluggedIn"] = d.pop("plugged_in")
         d["timeToFull"] = 0
         d["timeToEmpty"] = 0
         d["changeRate"] = 0
@@ -1217,14 +1218,16 @@ def probe_system_battery() -> list[BatteryReading]:
             if os.path.exists(stat_file):
                 with open(stat_file, encoding="utf-8") as f:
                     st = f.read().strip().lower()
-            charging = st in ("charging", "full")
+            charging = st == "charging"
+            plugged_in = st in ("full", "not charging")
             bat_name = os.path.basename(bat_path)
             out.append(
                 BatteryReading(
                     name=f"System Battery ({bat_name})",
                     percent=percent,
                     charging=charging,
-                    status=1 if charging else 0,
+                    plugged_in=plugged_in,
+                    status=1 if charging or plugged_in else 0,
                     protocol="sysfs",
                     transport="internal",
                     kind="system",

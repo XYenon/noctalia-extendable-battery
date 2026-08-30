@@ -1,0 +1,106 @@
+{
+  "notifications": {
+    "critical": {
+      "body": "{device} 剩余 {percent}%。",
+      "title": "电量严重不足"
+    },
+    "low": {
+      "body": "{device} 剩余 {percent}%。",
+      "title": "电量低"
+    }
+  },
+  "panel": {
+    "battery": "电池",
+    "close": "关闭",
+    "no_devices": "未检测到 Keychron 电池。",
+    "other_devices": "其他设备",
+    "peripherals": "外设",
+    "refresh": "刷新",
+    "settings": "插件设置",
+    "system_power": "打开系统电源控制",
+    "title": "可扩展电量",
+    "unknown_device": "电池设备"
+  },
+  "service": {
+    "invalid_output": "电量读取器返回了无效内容。",
+    "launch_error": "无法启动电量读取器。",
+    "plugin_dir_error": "无法定位插件目录。"
+  },
+  "settings": {
+    "bluetooth_filter": {
+      "description": "只包含名称中含有此文本的蓝牙设备。",
+      "label": "蓝牙名称过滤"
+    },
+    "critical_threshold": {
+      "description": "显示严重低电量通知的百分比。",
+      "label": "严重低电量阈值（%）"
+    },
+    "enable_bluetooth": {
+      "description": "读取 BlueZ 提供的设备电量信息。",
+      "label": "启用蓝牙读数"
+    },
+    "notifications_enabled": {
+      "description": "每个放电周期在低电量和严重低电量时各通知一次。",
+      "label": "电池通知"
+    },
+    "show_power_profiles": {
+      "description": "在电量面板中显示 Noctalia 原生电源模式控制入口。",
+      "label": "显示电源模式"
+    },
+    "refresh_interval": {
+      "description": "查询 HID 和 BlueZ 的间隔（秒）。",
+      "label": "刷新间隔（秒）"
+    },
+    "warning_threshold": {
+      "description": "显示低电量通知的百分比。",
+      "label": "低电量阈值（%）"
+    }
+  },
+  "states": {
+    "charging": "充电中",
+    "discharging": "放电中",
+    "plugged_in": "已接通电源"
+  },
+  "tooltip": {
+    "battery_health": "电池健康度",
+    "battery_level": "电池电量",
+    "rate": "功率",
+    "time_left": "剩余时间",
+    "time_to_full": "充满所需时间"
+  },
+  "widget": {
+    "device_filter": {
+      "description": "优先选择名称中含有此文本的 Provider 设备。",
+      "label": "设备名称过滤"
+    },
+    "display_mode": {
+      "glyph": "图标",
+      "graphic": "图形",
+      "label": "显示模式",
+      "none": "无"
+    },
+    "hide_when_full": {
+      "label": "充满时隐藏"
+    },
+    "hide_when_plugged": {
+      "label": "接通电源时隐藏"
+    },
+    "label_content": {
+      "description": "Provider 未提供时间或功率时回退到百分比。",
+      "label": "标签内容",
+      "percent": "百分比",
+      "rate": "功率",
+      "time": "剩余时间"
+    },
+    "prefer_bluetooth": {
+      "description": "同一 Provider 提供多个读数时优先选择蓝牙。",
+      "label": "优先蓝牙读数"
+    },
+    "show_label": {
+      "label": "显示标签"
+    },
+    "warning_color": {
+      "label": "警告颜色"
+    }
+  }
+}

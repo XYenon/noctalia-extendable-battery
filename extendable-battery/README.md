@@ -1,129 +1,73 @@
-# Extendable Battery
+# Extendable Battery for Noctalia v5
 
-Extensible battery provider manager and native-style battery widget for Noctalia Shell **v4.7.7+**.
+A native-style Noctalia v5 bar widget and panel for Keychron keyboards, mice, and receivers.
 
-## Features
+## v5 integration
 
-- Merges native UPower (laptop) batteries with devices from independent provider plugins in one bar widget and panel.
-- Native-style display modes, device selection, visibility options, tooltips, Bluetooth device list, power-profile controls, and Noctalia Performance mode.
-- System batteries keep Noctalia’s native service and thresholds; provider devices use provider-owned thresholds and notifications.
-- Providers can register live via QML or as a static snapshot over IPC.
+- Uses v5's `plugin.toml`, Luau service/widget/panel entries, generated settings UI, shared state, native palette roles, glyphs, and controls.
+- Aligns with the native battery widget's `none` / `glyph` / `graphic` modes, label fallback, warning color, hide-when-plugged/full behavior, structured tooltip, and glyph thresholds. Because v5 does not expose the native graphic battery renderer, `graphic` uses the native declarative progress control and palette.
+- Left click keeps the extension's original combined view: system batteries are listed first, followed by Keychron and registered-provider batteries with the same per-device status, progress, percentage, and fallback error rows. Right click has no default action and middle click opens widget settings, matching the native v5 widget gesture defaults.
+- The old power-profile option remains off by default. Enabling it shows an entry to Noctalia's native **Control Center → Power** tab for UPower-backed controls instead of reimplementing private shell services. Noctalia v5 removed the old shell-performance mode, so there is no native `showNoctaliaPerformance` equivalent to preserve.
+- Provider data and low-battery notifications are owned by one background service.
 
-## Install
-
-Full repository setup (source URL, install order, bar widget) is in the [repository README](../README.md).
-
-After the shared source is added:
-
-1. Install and enable **Extendable Battery**.
-2. Add its widget to the bar.
-3. Install and enable one or more provider plugins if you need peripheral batteries.
+Noctalia v5 does not expose its private `UPowerService`, native battery geometry, or a cross-plugin provider registry to Luau. Consequently, the old v4 QML provider split cannot be preserved. The bundled service reads the system battery for the combined panel and Keychron backend, while advanced system controls are delegated to the native Power tab instead of copied.
 
 ## Settings
 
-Configured in the plugin settings UI. Defaults come from `manifest.json`.
+Noctalia generates and persists settings from `plugin.toml`.
 
-| Setting                   | Default         | Description                                                                          |
-| ------------------------- | --------------- | ------------------------------------------------------------------------------------ |
-| Display mode              | `graphic-clean` | How the bar presents charge.                                                         |
-| Device                    | `__default__`   | Which battery the bar follows (`__default__` = automatic).                           |
-| Show power profiles       | off             | Power-profile controls in the panel.                                                 |
-| Show Noctalia Performance | off             | Noctalia Performance toggle in the panel.                                            |
-| Hide if not detected      | on              | Hide the widget when no suitable battery is available.                               |
-| Hide if idle              | off             | Hide when the selected device is idle / not interesting.                             |
-| Prefer Bluetooth          | on              | When a provider reports multiple transports, prefer Bluetooth for default selection. |
-| Device name filter        | _(empty)_       | Optional substring to prefer a specific device name.                                 |
+Widget-instance settings mirror the native v5 widget: display mode, label visibility/content, hide when plugged/full, and warning color. Advanced settings select a device by name substring and prefer Bluetooth readings.
 
-Power-profile UI needs `power-profiles-daemon` or `power-profiles` on the system.
+Plugin-wide settings configure refresh interval, Bluetooth discovery, notification thresholds, and notifications.
 
-## Local development
+## HID permissions
 
-From a checkout of this repository:
+Install the rule for USB / 2.4 GHz access:
 
 ```bash
-ln -sfn "$(pwd)/extendable-battery" ~/.config/noctalia/plugins/extendable-battery
+sudo cp udev/70-keychron.rules /etc/udev/rules.d/
+sudo udevadm control --reload-rules
+sudo udevadm trigger --subsystem-match=hidraw --action=add
 ```
 
-Enable the plugin in Noctalia, add the bar widget, then symlink and enable provider plugins as needed.
+Re-plug or wake the device after installing the rule.
 
-## Provider API
+## CLI diagnostics
 
-### Live QML registration
-
-```qml
-import QtQuick
-import qs.Commons
-import qs.Services.Noctalia
-
-Item {
-  property var devices: []
-
-  Component.onCompleted: {
-    const loadedPlugins = PluginService.loadedPlugins || ({});
-    const key = Object.keys(loadedPlugins).find(function(candidate) {
-      return loadedPlugins[candidate]?.manifest?.id === "extendable-battery";
-    });
-    const manager = key ? loadedPlugins[key].mainInstance : null;
-    if (manager) {
-      manager.registerBatteryProvider({
-        id: "example",
-        name: "Example Provider",
-        getDevices: function() { return devices; },
-        refresh: function() { /* update devices, then aggregate */ }
-      });
-    }
-  }
-}
-```
-
-After changing its device list, a live provider should call `manager.aggregateAllDevices()`.
-
-### IPC registration
-
-Requires a running `noctalia-shell` with **Extendable Battery** loaded:
+From this directory:
 
 ```bash
-qs -c noctalia-shell ipc call plugin:extendable-battery registerProvider \
-  '{"id":"example","name":"Example Provider","devices":[{"id":"wireless-device-1","name":"Wireless Device","percent":85,"charging":false,"kind":"mouse"}]}'
-
-qs -c noctalia-shell ipc call plugin:extendable-battery get
-qs -c noctalia-shell ipc call plugin:extendable-battery refresh
+python3 scripts/keychron_battery.py --pretty
+python3 scripts/keychron_battery.py --list-hid
 ```
 
-If IPC fails, confirm the shell is running and the plugin is enabled (`get` is a good smoke test).
+Protocol details are documented in [`PROTOCOL.md`](PROTOCOL.md).
 
-## Device schema
+## External provider snapshots
 
-Providers return an array of device objects. The manager normalizes each entry.
+Noctalia v5 isolates plugin VMs, so providers register JSON snapshots through the service entry's IPC endpoint. Re-send `registerProvider` whenever the device list changes:
 
-**Minimum useful fields:** `id`, `name`, and `percent`. Everything else has defaults or is optional.
+```bash
+noctalia msg plugin xyenon/extendable-battery:battery-service all registerProvider \
+  '{"id":"example","name":"Example","devices":[{"id":"mouse","name":"Wireless Mouse","percent":85,"ready":true,"present":true,"kind":"mouse"}]}'
 
-| Field                  | Type          | Description                                                  |
-| ---------------------- | ------------- | ------------------------------------------------------------ |
-| `id`                   | string        | **Required.** Stable physical-device id within the provider. |
-| `name`                 | string        | User-visible device name.                                    |
-| `percent`              | number        | Charge 0–100, or `-1` if unavailable.                        |
-| `present`              | bool          | Device present / connected.                                  |
-| `ready`                | bool          | Battery reading is ready.                                    |
-| `charging`             | bool          | Actively charging.                                           |
-| `pluggedIn`            | bool          | Externally powered but not actively charging.                |
-| `timeToFull`           | number        | Seconds until full, or `0` if unknown.                       |
-| `timeToEmpty`          | number        | Seconds until empty, or `0` if unknown.                      |
-| `changeRate`           | number        | Charge/discharge rate in watts, or `0`.                      |
-| `healthSupported`      | bool          | Battery health available.                                    |
-| `healthPercentage`     | number        | Battery health percentage.                                   |
-| `warningThreshold`     | number        | Provider-owned low-battery threshold.                        |
-| `criticalThreshold`    | number        | Provider-owned critical threshold.                           |
-| `notificationsEnabled` | bool          | Whether provider battery toasts are enabled.                 |
-| `kind`                 | string        | e.g. `laptop`, `keyboard`, `mouse`, `headphones`.            |
-| `protocol`             | string        | e.g. `bluez`, `nape`.                                        |
-| `transport`            | string        | e.g. `bluetooth`, `hid`, `internal`.                         |
-| `status`               | number/string | Provider-specific raw state.                                 |
-| `error`                | string        | Reading error, if any.                                       |
+noctalia msg plugin xyenon/extendable-battery:battery-service all unregisterProvider example
+```
 
-`warningThreshold`, `criticalThreshold`, and `notificationsEnabled` may be set on each device or on the provider object; per-device values win. If omitted, defaults are **20%** warning, **5%** critical, and notifications **on**.
+Registered devices appear below the system battery alongside the bundled Keychron devices. Registrations are in-memory and should be restored by the provider after either plugin reloads.
+
+## Local development and validation
+
+Add the repository as a path source in Noctalia v5, or copy/symlink this directory under the v5 plugin development directory. Validate with:
+
+```bash
+noctalia plugins lint extendable-battery
+python3 scripts/keychron_battery.py --pretty
+```
 
 ## Requirements
 
-- Noctalia Shell **v4.7.7** or newer
-- Optional: `power-profiles-daemon` or `power-profiles` for power-profile controls
+- Noctalia Shell v5 with plugin API 24+
+- Python 3.10+
+- Linux; optional BlueZ and `busctl` for Bluetooth readings
+- Read/write access to Keychron `/dev/hidraw*` nodes for USB / receiver readings

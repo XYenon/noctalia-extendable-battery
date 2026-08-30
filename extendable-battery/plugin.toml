@@ -1,0 +1,154 @@
+id = "xyenon/extendable-battery"
+name = "Extendable Battery"
+version = "1.0.0"
+plugin_api = 24
+author = "XYenon"
+license = "MIT"
+dependencies = ["python3"]
+tags = ["battery", "hardware", "keychron", "utility"]
+icon = "battery-4"
+description = "Native-style battery widget for Keychron HID and Bluetooth devices."
+
+[[setting]]
+key = "refresh_interval"
+type = "int"
+label_key = "settings.refresh_interval.label"
+description_key = "settings.refresh_interval.description"
+default = 60
+min = 5
+max = 3600
+step = 5
+
+[[setting]]
+key = "enable_bluetooth"
+type = "bool"
+label_key = "settings.enable_bluetooth.label"
+description_key = "settings.enable_bluetooth.description"
+default = true
+
+[[setting]]
+key = "bluetooth_filter"
+type = "string"
+label_key = "settings.bluetooth_filter.label"
+description_key = "settings.bluetooth_filter.description"
+default = "keychron"
+visible_when = { key = "enable_bluetooth", values = [true] }
+
+[[setting]]
+key = "notifications_enabled"
+type = "bool"
+label_key = "settings.notifications_enabled.label"
+description_key = "settings.notifications_enabled.description"
+default = true
+
+[[setting]]
+key = "warning_threshold"
+type = "int"
+label_key = "settings.warning_threshold.label"
+description_key = "settings.warning_threshold.description"
+default = 20
+min = 1
+max = 100
+step = 1
+
+[[setting]]
+key = "critical_threshold"
+type = "int"
+label_key = "settings.critical_threshold.label"
+description_key = "settings.critical_threshold.description"
+default = 5
+min = 0
+max = 99
+step = 1
+
+[[setting]]
+key = "show_power_profiles"
+type = "bool"
+label_key = "settings.show_power_profiles.label"
+description_key = "settings.show_power_profiles.description"
+default = false
+
+[[widget]]
+id = "battery"
+entry = "bar.luau"
+
+[widget.actions]
+left = "panel-toggle xyenon/extendable-battery:details"
+
+  [[widget.setting]]
+  key = "display_mode"
+  type = "select"
+  label_key = "widget.display_mode.label"
+  default = "glyph"
+  options = [
+    { value = "none", label_key = "widget.display_mode.none" },
+    { value = "glyph", label_key = "widget.display_mode.glyph" },
+    { value = "graphic", label_key = "widget.display_mode.graphic" },
+  ]
+
+  [[widget.setting]]
+  key = "show_label"
+  type = "bool"
+  label_key = "widget.show_label.label"
+  default = true
+
+  [[widget.setting]]
+  key = "label_content"
+  type = "select"
+  label_key = "widget.label_content.label"
+  description_key = "widget.label_content.description"
+  default = "percent"
+  visible_when = { key = "show_label", values = [true] }
+  options = [
+    { value = "percent", label_key = "widget.label_content.percent" },
+    { value = "time", label_key = "widget.label_content.time" },
+    { value = "rate", label_key = "widget.label_content.rate" },
+  ]
+
+  [[widget.setting]]
+  key = "hide_when_plugged"
+  type = "bool"
+  label_key = "widget.hide_when_plugged.label"
+  default = false
+
+  [[widget.setting]]
+  key = "hide_when_full"
+  type = "bool"
+  label_key = "widget.hide_when_full.label"
+  default = false
+
+  [[widget.setting]]
+  key = "warning_color"
+  type = "color"
+  label_key = "widget.warning_color.label"
+  default = "error"
+
+  [[widget.setting]]
+  key = "device_filter"
+  type = "string"
+  label_key = "widget.device_filter.label"
+  description_key = "widget.device_filter.description"
+  default = ""
+  advanced = true
+
+  [[widget.setting]]
+  key = "prefer_bluetooth"
+  type = "bool"
+  label_key = "widget.prefer_bluetooth.label"
+  description_key = "widget.prefer_bluetooth.description"
+  default = true
+  advanced = true
+
+[[panel]]
+id = "details"
+entry = "panel.luau"
+width = 440
+height = 560
+placement = "attached"
+position = "auto"
+open_near_click = true
+dismiss_on_outside_click = true
+
+[[service]]
+id = "battery-service"
+entry = "service.luau"

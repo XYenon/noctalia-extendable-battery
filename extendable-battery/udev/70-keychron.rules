@@ -1,4 +1,4 @@
-# Keychron devices (VID 3434) — allow local user access to hidraw for
+# Extendable Battery: allow local user access to Keychron hidraw devices (VID 3434) for
 # Keychron Launcher (WebHID) and tools that read battery over vendor HID.
 # https://launcher.keychron.cn / https://launcher.keychron.com
 #

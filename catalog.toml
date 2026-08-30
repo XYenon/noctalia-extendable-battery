@@ -1,0 +1,12 @@
+[[plugin]]
+id = "xyenon/extendable-battery"
+name = "Extendable Battery"
+version = "1.0.0"
+updated_at = 1788048000
+added_at = 1788048000
+author = "XYenon"
+license = "MIT"
+icon = "battery-4"
+description = "Native-style battery widget for Keychron HID and Bluetooth devices."
+plugin_api = 24
+tags = ["battery", "hardware", "keychron", "utility"]
