@@ -38,6 +38,7 @@ dist/
 .claude/
 .cursor/
 .grok/
+.amp/portals/*
 
 # Operating system and editor files
 .DS_Store
