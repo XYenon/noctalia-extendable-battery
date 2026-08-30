@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Download Keychron Launcher static device definitions into data/launcher-devices.json.
+"""Update the Extendable Battery plugin's Keychron device catalog.
 
 Launcher (launcher.keychron.cn) serves per-device UI JSON at:
 

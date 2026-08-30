@@ -1,39 +1,21 @@
 # Noctalia Extendable Battery
 
-Custom plugin source for Noctalia Shell **v4.7.7+**:
+A Noctalia Shell **v5** plugin source providing a native-style battery widget for Keychron keyboards, mice, and receivers over HID or Bluetooth.
 
-- [**Extendable Battery**](extendable-battery/README.md) — provider manager, bar widget, panel, and power-profile controls.
-- [**Keychron Battery Provider**](keychron-battery-provider/README.md) — Keychron HID and Bluetooth battery backend.
+Noctalia v5 replaced QML plugins with sandboxed Luau entries. The previous provider plugin is therefore bundled into one v5 plugin; no installation order or second plugin is required.
 
 ## Install
 
-1. Open **Settings → Plugins → Sources**, add this URL, then refresh plugin sources:
+1. Open **Settings → Plugins → Sources**, add this Git source, then refresh:
 
    ```text
    https://github.com/XYenon/noctalia-extendable-battery
    ```
 
-2. Install and enable plugins **in this order** (Noctalia v4 records dependencies but does not install them automatically):
+2. Install and enable **Extendable Battery** (`xyenon/extendable-battery`).
+3. Add its battery widget to the bar.
+4. For USB or 2.4 GHz devices, install the [udev rule](extendable-battery/README.md#hid-permissions).
 
-   1. **Extendable Battery**
-   2. **Keychron Battery Provider** (optional; only if you use Keychron devices)
+Left click keeps the extension's original interaction: it opens a combined battery panel with the system battery followed by Keychron and registered-provider devices. Other gestures retain Noctalia v5's native widget defaults (no right-click action; middle click opens widget settings).
 
-3. Add the **Extendable Battery** widget to the bar.
-
-4. For Keychron over USB / 2.4 GHz receiver, install the [udev rule](keychron-battery-provider/README.md#hid-permissions) so your user can open `/dev/hidraw*`.
-
-### Verify
-
-- The bar shows the Extendable Battery widget (or stays hidden if _Hide if not detected_ is on and no battery is present).
-- Opening the panel lists the laptop battery (UPower) and any registered provider devices.
-- With Keychron: after udev + the provider plugin, run the [CLI diagnostics](keychron-battery-provider/README.md#cli-diagnostics) or check the panel for keyboard/mouse entries.
-
-## Repository layout
-
-```text
-registry.json                 # indexes both plugins for Noctalia
-extendable-battery/           # plugin id: extendable-battery
-keychron-battery-provider/    # plugin id: keychron-battery-provider
-```
-
-Directory names match each plugin’s manifest `id`, so Noctalia can install either plugin independently (sparse checkout). See each plugin README for local development, settings, and APIs.
+See [the plugin README](extendable-battery/README.md) for settings, diagnostics, and local development.

@@ -1,0 +1,106 @@
+{
+  "notifications": {
+    "critical": {
+      "body": "{device} is at {percent}%.",
+      "title": "Battery critically low"
+    },
+    "low": {
+      "body": "{device} is at {percent}%.",
+      "title": "Battery low"
+    }
+  },
+  "panel": {
+    "battery": "Battery",
+    "close": "Close",
+    "no_devices": "No Keychron battery detected.",
+    "other_devices": "Other devices",
+    "peripherals": "Peripherals",
+    "refresh": "Refresh",
+    "settings": "Plugin settings",
+    "system_power": "Open system power controls",
+    "title": "Extendable Battery",
+    "unknown_device": "Battery device"
+  },
+  "service": {
+    "invalid_output": "The battery reader returned invalid output.",
+    "launch_error": "Could not start the battery reader.",
+    "plugin_dir_error": "Could not locate the plugin directory."
+  },
+  "settings": {
+    "bluetooth_filter": {
+      "description": "Only include Bluetooth devices whose name contains this text.",
+      "label": "Bluetooth name filter"
+    },
+    "critical_threshold": {
+      "description": "Percentage at which a critical-battery notification is shown.",
+      "label": "Critical battery threshold (%)"
+    },
+    "enable_bluetooth": {
+      "description": "Read battery information exposed by BlueZ.",
+      "label": "Enable Bluetooth readings"
+    },
+    "notifications_enabled": {
+      "description": "Notify once at the low and critical levels during each discharge cycle.",
+      "label": "Battery notifications"
+    },
+    "show_power_profiles": {
+      "description": "Show an entry to Noctalia's native power-profile controls in the battery panel.",
+      "label": "Show power profiles"
+    },
+    "refresh_interval": {
+      "description": "How often to query HID and BlueZ, in seconds.",
+      "label": "Refresh interval (seconds)"
+    },
+    "warning_threshold": {
+      "description": "Percentage at which a low-battery notification is shown.",
+      "label": "Low battery threshold (%)"
+    }
+  },
+  "states": {
+    "charging": "Charging",
+    "discharging": "Discharging",
+    "plugged_in": "Plugged in"
+  },
+  "tooltip": {
+    "battery_health": "Battery health",
+    "battery_level": "Battery level",
+    "rate": "Rate",
+    "time_left": "Time left",
+    "time_to_full": "Time until full"
+  },
+  "widget": {
+    "device_filter": {
+      "description": "Prefer a provider device whose name contains this text.",
+      "label": "Device name filter"
+    },
+    "display_mode": {
+      "glyph": "Glyph",
+      "graphic": "Graphic",
+      "label": "Display mode",
+      "none": "None"
+    },
+    "hide_when_full": {
+      "label": "Hide when full"
+    },
+    "hide_when_plugged": {
+      "label": "Hide when plugged in"
+    },
+    "label_content": {
+      "description": "Time and rate fall back to percentage when a provider does not report them.",
+      "label": "Label content",
+      "percent": "Percentage",
+      "rate": "Rate",
+      "time": "Time remaining"
+    },
+    "prefer_bluetooth": {
+      "description": "Prefer Bluetooth when the same provider reports multiple readings.",
+      "label": "Prefer Bluetooth readings"
+    },
+    "show_label": {
+      "label": "Show label"
+    },
+    "warning_color": {
+      "label": "Warning color"
+    }
+  }
+}

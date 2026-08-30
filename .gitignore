@@ -18,11 +18,6 @@ build/
 dist/
 *.egg-info/
 
-# Qt/QML generated files
-.qmlcache/
-*.qmlc
-.qmlls.ini
-
 # Local configuration and logs
 .env
 .env.*
@@ -30,7 +25,7 @@ dist/
 *.log
 *.tmp
 
-# Noctalia per-user plugin runtime state (defaults live in manifest.json)
+# Noctalia per-user plugin runtime state (defaults live in plugin.toml)
 */settings.json
 
 # Agent / local tooling

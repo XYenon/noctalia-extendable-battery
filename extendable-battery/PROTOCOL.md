@@ -1,4 +1,4 @@
-# Keychron Launcher Protocol Specifications
+# Keychron Launcher Protocol Specifications (Extendable Battery)
 
 Reverse-engineered protocol specifications checked against [Keychron Launcher](https://launcher.keychron.cn/) V1.4.3 and its production JS bundle [`main.e1c0b6933e403941.js`](https://launcher.keychron.cn/main.e1c0b6933e403941.js) on 2026-07-31. The bundle's SHA-256 digest was `7c3b68e67ebb6e6d5c329818b59f4a22ecef9fc8d01cecd640aa4cb1e02c44b2`.
 
