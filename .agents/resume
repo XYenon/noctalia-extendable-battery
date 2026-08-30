@@ -2,8 +2,7 @@
 set -euo pipefail
 
 repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
-plugin_dir="$HOME/.config/noctalia/plugins"
+plugin_dir="$HOME/.local/share/noctalia/plugins"
 
 mkdir -p "$plugin_dir"
 ln -sfn "$repo_root/extendable-battery" "$plugin_dir/extendable-battery"
-ln -sfn "$repo_root/keychron-battery-provider" "$plugin_dir/keychron-battery-provider"

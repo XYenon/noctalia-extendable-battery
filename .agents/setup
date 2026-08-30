@@ -1,14 +1,32 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+step_name=""
+step_started=0
+
 step() {
+  if [[ -n "$step_name" ]]; then
+    printf '<== %s completed in %ss\n' "$step_name" "$((SECONDS - step_started))"
+  fi
+  step_name="$1"
+  step_started=$SECONDS
   printf '\n==> %s\n' "$1"
 }
+
+finish() {
+  local status=$?
+  if [[ -n "$step_name" ]]; then
+    printf '<== %s %s in %ss\n' \
+      "$step_name" "$([[ $status -eq 0 ]] && printf completed || printf failed)" \
+      "$((SECONDS - step_started))"
+  fi
+}
+trap finish EXIT
 
 repo_root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
 step "Installing Wayland and setup prerequisites"
-packages=(ca-certificates curl git grim jq sway xz-utils)
+packages=(ca-certificates curl git grim jq python3 sway xz-utils)
 missing=()
 for package in "${packages[@]}"; do
   if ! dpkg-query -W -f='${Status}' "$package" 2>/dev/null | grep -Fq 'install ok installed'; then
@@ -46,7 +64,7 @@ fi
 
 step "Configuring the Noctalia binary cache"
 nix_custom_conf=/etc/nix/nix.custom.conf
-cache_marker="# noctalia-shell binary cache"
+cache_marker="# noctalia binary cache"
 if ! sudo grep -Fqx "$cache_marker" "$nix_custom_conf" 2>/dev/null; then
   printf '%s\n' \
     "$cache_marker" \
@@ -55,97 +73,82 @@ if ! sudo grep -Fqx "$cache_marker" "$nix_custom_conf" 2>/dev/null; then
     | sudo tee -a "$nix_custom_conf" >/dev/null
 fi
 
-step "Installing Noctalia Shell v4.7.7"
-if ! command -v noctalia-shell >/dev/null 2>&1; then
-  nix profile add 'github:noctalia-dev/noctalia-shell/v4.7.7#default'
+step "Installing Noctalia v5"
+noctalia_ref='github:noctalia-dev/noctalia/v5.0.0-beta.10#default'
+installed_noctalia_ref="$(
+  nix profile list --json \
+    | jq -r '.elements.noctalia.originalUrl // empty'
+)"
+if [[ "$installed_noctalia_ref" != "${noctalia_ref%#default}" ]]; then
+  if [[ -n "$installed_noctalia_ref" ]]; then
+    nix profile remove noctalia
+  fi
+  nix profile add "$noctalia_ref"
 fi
 
-step "Linking the repository plugins into Noctalia"
-plugin_dir="$HOME/.config/noctalia/plugins"
+# This setup previously installed the unrelated Quickshell-based v4 package.
+# Remove only that profile entry when upgrading a stale project snapshot.
+if nix profile list --json | jq -e '.elements["noctalia-shell"]' >/dev/null 2>&1; then
+  nix profile remove noctalia-shell
+fi
+
+step "Linking the v5 plugin into Noctalia's local development source"
+plugin_dir="$HOME/.local/share/noctalia/plugins"
 mkdir -p "$plugin_dir"
 ln -sfn "$repo_root/extendable-battery" "$plugin_dir/extendable-battery"
-ln -sfn "$repo_root/keychron-battery-provider" "$plugin_dir/keychron-battery-provider"
 
-plugin_settings_file="$repo_root/extendable-battery/settings.json"
-if [[ ! -e "$plugin_settings_file" ]]; then
-  cat >"$plugin_settings_file" <<'JSON'
-{
-  "displayMode": "icon-always",
-  "hideIfNotDetected": false
-}
-JSON
+config_dir="$HOME/.config/noctalia"
+config_file="$config_dir/config.toml"
+mkdir -p "$config_dir"
+if [[ ! -e "$config_file" ]]; then
+  cat >"$config_file" <<'TOML'
+[shell]
+telemetry_enabled = false
+polkit_agent = false
+
+[shell.animation]
+enabled = false
+
+[wallpaper]
+enabled = false
+
+[idle.behavior.lock]
+enabled = false
+
+[idle.behavior.screen-off]
+enabled = false
+
+[dock]
+enabled = false
+
+[bar.main]
+position = "top"
+start = ["launcher", "workspaces"]
+center = ["clock"]
+end = ["xyenon/extendable-battery:battery", "control-center"]
+
+[plugins]
+enabled = ["xyenon/extendable-battery"]
+auto_update = "none"
+TOML
 fi
 
-plugins_file="$HOME/.config/noctalia/plugins.json"
-if [[ ! -e "$plugins_file" ]]; then
-  cat >"$plugins_file" <<'JSON'
-{
-  "version": 2,
-  "sources": [],
-  "states": {
-    "extendable-battery": { "enabled": true, "sourceUrl": "" },
-    "keychron-battery-provider": { "enabled": true, "sourceUrl": "" }
-  }
-}
-JSON
-fi
-
-settings_file="$HOME/.config/noctalia/settings.json"
-if [[ ! -e "$settings_file" ]]; then
-  cat >"$settings_file" <<'JSON'
-{
-  "settingsVersion": 59,
-  "bar": {
-    "position": "top",
-    "widgets": {
-      "left": [{ "id": "Launcher" }, { "id": "Clock" }],
-      "center": [{ "id": "Workspace" }],
-      "right": [
-        {
-          "id": "plugin:extendable-battery",
-          "displayMode": "icon-always",
-          "hideIfNotDetected": false
-        },
-        { "id": "ControlCenter" }
-      ]
-    },
-    "screenOverrides": []
-  },
-  "general": {
-    "animationDisabled": true,
-    "showChangelogOnStartup": false,
-    "telemetryEnabled": false
-  },
-  "wallpaper": {
-    "enabled": true,
-    "useSolidColor": true,
-    "solidColor": "#15131f"
-  },
-  "dock": { "enabled": false },
-  "idle": { "enabled": false }
-}
-JSON
-fi
-
-shell_state_file="$HOME/.cache/noctalia/shell-state.json"
-if [[ ! -e "$shell_state_file" ]]; then
-  mkdir -p "$(dirname "$shell_state_file")"
-  cat >"$shell_state_file" <<'JSON'
-{
-  "changelogState": { "lastSeenVersion": "4.7.7" }
-}
-JSON
-fi
-
-step "Verifying the toolchain"
-nix --version
-noctalia-shell --version
-sway --version
-command -v grim
-python3 - "$repo_root/keychron-battery-provider/scripts" <<'PY'
+step "Validating the v5 plugin"
+noctalia --version
+noctalia plugins lint "$repo_root"
+python3 - "$repo_root/extendable-battery" <<'PY'
+import json
 import pathlib
 import sys
+import tomllib
 
-for path in pathlib.Path(sys.argv[1]).glob("*.py"):
+root = pathlib.Path(sys.argv[1])
+with (root / "plugin.toml").open("rb") as handle:
+    tomllib.load(handle)
+for path in (root / "translations").glob("*.json"):
+    json.loads(path.read_text(encoding="utf-8"))
+for path in (root / "scripts").glob("*.py"):
     compile(path.read_text(encoding="utf-8"), str(path), "exec")
 PY
+sway --version
+command -v grim
